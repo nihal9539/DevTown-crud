@@ -1,6 +1,6 @@
 import bcypt from "bcrypt"
 import jwt from "jsonwebtoken";
-import UserModel from "../Model/userModel";
+import UserModel from "../Model/userModel.js";
 
 
 // Register New User
@@ -23,6 +23,7 @@ export const registerUser = async (req, res) => {
 
         }, process.env.JWT_SECRET, { expiresIn: '2' })
         res.status(200).json({ user, token })
+        console.log(user,token);
 
     } catch (error) {
         res.status(500).json({ message: error.message })
