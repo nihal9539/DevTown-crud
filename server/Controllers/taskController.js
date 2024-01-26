@@ -49,6 +49,28 @@ export const getTask = async (req, res) => {
     }
 
 }
+export const getOneTask = async (req, res) => {
+
+    const id = req.params.id
+    console.log(id);
+
+    try {
+        const task = await TaskModel.findById(id)
+        if (task) {
+
+            console.log(task);
+            res.status(200).json(task)
+        } else {
+            res.status(400).json("not found")
+
+        }
+
+    } catch (error) {
+        res.status(500).json(error)
+
+    }
+
+}
 export const deleteTask = async (req, res) => {
 
     const id = req.params.id
@@ -71,8 +93,7 @@ export const deleteTask = async (req, res) => {
 export const updateTask = async (req, res) => {
 
     const id = req.params.id
-    console.log(id);
-    console.log(req.body);
+
     try {
         const task = await TaskModel.findById(id)
         if (task) {

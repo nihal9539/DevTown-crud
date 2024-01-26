@@ -5,22 +5,30 @@ import { loginUser } from '../../api/Authapi';
 
 export default function Login() {
     const navigate = useNavigate()
+    const [error, setError] = ('')
     const [data, setData] = useState({
         username: "",
         password: "",
     })
-    const handledata = async(e)=>{
+    const handledata = async (e) => {
         e.preventDefault();
-       await loginUser(data).then((res)=>{
-            localStorage.setItem('user',JSON.stringify(res.data))
-           navigate('/')
-           window.location.reload(); 
-         }).catch((err)=>{
+        await loginUser(data).then((response) => {
+            if (response.status === 200) {
+                console.log(data.message);
+                // Redirect to a new page or perform other actions upon successful login
+                localStorage.setItem('user', JSON.stringify(response.data))
+                navigate('/')
+                window.location.reload();
+            } else {
+                setError(data.error);
+                console.log(data);
+            }
+        }).catch((err) => {
             console.log(err);
-         })
-      
+        })
+
     }
-  
+
     return (
         <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
             <div className="w-full p-8 m-auto bg-white  rounded-md shadow-xl shadow-gray-300 lg:max-w-xl">
@@ -28,6 +36,7 @@ export default function Login() {
                     Sign in
                 </h1>
                 <form className="mt-6" onSubmit={handledata}>
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
                     <div className="mb-2">
                         <label
 
@@ -38,7 +47,7 @@ export default function Login() {
                         <input
                             type="text"
                             value={data.username}
-                            onChange={(e)=>setData({...data,username:e.target.value})}
+                            onChange={(e) => setData({ ...data, username: e.target.value })}
                             className="block w-full px-4 py-2 mt-2  bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
                         />
                     </div>
@@ -53,11 +62,11 @@ export default function Login() {
                         <input
                             type="password"
                             value={data.password}
-                            onChange={(e)=>setData({...data,password:e.target.value})}
+                            onChange={(e) => setData({ ...data, password: e.target.value })}
                             className="block w-full px-4 py-2 mt-2  bg-white border rounded-md focus:border-purple-400 focus:ring-purple-300 focus:outline-none focus:ring focus:ring-opacity-40"
                         />
                     </div>
-                
+
                     <div className="mt-6">
                         <button type='submit' className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-blue-700 rounded-md ">
                             Login
