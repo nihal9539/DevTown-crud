@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, redirect, useNavigate } from 'react-router-dom';
 import { loginUser } from '../../api/Authapi';
 
 export default function Login() {
+    const navigate = useNavigate()
     const [data, setData] = useState({
         username: "",
         password: "",
@@ -11,7 +12,9 @@ export default function Login() {
     const handledata = async(e)=>{
         e.preventDefault();
        await loginUser(data).then((res)=>{
-            console.log(res);
+            localStorage.setItem('user',JSON.stringify(res.data))
+           navigate('/')
+           window.location.reload(); 
          }).catch((err)=>{
             console.log(err);
          })

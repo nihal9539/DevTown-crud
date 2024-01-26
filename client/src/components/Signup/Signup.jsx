@@ -16,7 +16,8 @@ export default function Signup() {
         e.preventDefault()
      await  registerUser(data).then((res)=>{
         console.log(res);
-        // localStorage.
+        localStorage.setItem('user',JSON.stringify(res.data))
+        window.location.reload(); 
      }).catch((err)=>{
         console.log(err);
      })

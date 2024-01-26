@@ -3,11 +3,18 @@ import { TbLogout2 } from "react-icons/tb";
 import { IoMdAdd } from "react-icons/io";
 import { MdInfoOutline } from "react-icons/md";
 import TaskModel from '../TaskModel/TaskModel';
+import { Navigate, useNavigate } from 'react-router-dom';
 const Sidebar = () => {
+    const navigate = useNavigate()
     const [modelOpen, setModelOpen] = useState(false)
 
     const handlemodelopen = () => {
         setModelOpen(!modelOpen);
+    }
+    const handleLogOut = ()=>{
+        localStorage.removeItem("user");
+        navigate('/')
+        window.location.reload(); 
     }
     return (
         <div>
@@ -38,10 +45,10 @@ const Sidebar = () => {
                             </a>
                         </li>
                         <li>
-                            <a href="#" class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+                            <div onClick={handleLogOut} class="flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
                                 <TbLogout2 size={30} />
                                 <span class="flex-1 ms-3 whitespace-nowrap">Log Out</span>
-                            </a>
+                            </div>
                         </li>
 
 
