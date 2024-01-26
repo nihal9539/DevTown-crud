@@ -7,7 +7,7 @@ import Modal from '@mui/material/Modal';
 import DatePicker from 'react-date-picker';
 import 'react-date-picker/dist/DatePicker.css';
 import 'react-calendar/dist/Calendar.css';
-import { createTask } from '../../api/taskapi';
+import { createTask, updateTask } from '../../api/taskapi';
 
 
 const style = {
@@ -24,19 +24,20 @@ const style = {
 };
 
 
-export default function TaskEditModel({datas, modelOpen, setModelOpen }) {
+export default function TaskEditModel({ datas, modelOpen, setModelOpen }) {
 
 
+    const user = JSON.parse(localStorage.getItem('user'))
 
 
     const [data, setData] = useState({
-        // date: "",
         title: datas.title,
         task: datas.task,
         description: datas.description
     })
-    const handleSubmit = () => {
-      createTask(user.user._id,data)
+    console.log(data);
+    const handleSubmit = async() => {
+       await updateTask(datas._id, data)
     }
     return (
         <div>

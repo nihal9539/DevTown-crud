@@ -68,3 +68,22 @@ export const deleteTask = async (req, res) => {
     }
 
 }
+export const updateTask = async (req, res) => {
+
+    const id = req.params.id
+    console.log(id);
+    console.log(req.body);
+    try {
+        const task = await TaskModel.findById(id)
+        if (task) {
+            await task.updateOne({ $set: req.body })
+            res.status(200).json("post delete")
+        } else {
+
+            res.status(403).json("Action for hidden")
+        }
+    } catch (error) {
+        res.status(500).json(error.message)
+    }
+
+}
