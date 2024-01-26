@@ -1,16 +1,37 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Sidebar from '../../components/Sidebar/Sidebar'
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { MdOutlineModeEdit } from "react-icons/md";
+import { deleteTask, getTask } from '../../api/taskapi';
+import TaskEditModel from '../../components/TaskEditModel/TaskEditModel';
 
 const Home = () => {
-    const ar = [1, 2, 3]
+    const user = JSON.parse(localStorage.getItem('user'))
+    const [taskData, setTaskData] = useState([])
+    useEffect(() => {
+        getTask(user.user._id).then((res) => {
+            setTaskData(res.data)
+        })
+
+    }, [])
+    // console.log(new Date().getDate() + new Date());
+    const [editModelOpen,setEditModelOpen] = useState(false)
+    const handleDelete = (id) => {
+        deleteTask(id)
+        window.location.reload()
+
+    }
+    const handleEdit = (data) => {
+        console.log(data);
+        console.log(editModelOpen);
+        setEditModelOpen(prev =>!prev)
+    }
     return (
         <div className=''>
             <Sidebar />
-            <div className='p-4 sm:ml-64 bg-gray-200 flex flex-col h-auto '>
+            <div className='p-4 sm:ml-64 bg-gray-200 flex flex-col h-auto min-h-screen '>
                 <div className='   px-4 py-3'>
-                    <div className='flex flex-row w-full shadow-md gap-1 items-center justify-center  bg-blue-500 p-3 rounded-xl'>
+                    <div className='flex flex-row w-full shadow-md gap-1 items-center justify-center text-white  bg-blue-500 p-3 rounded-xl'>
                         <div className='w-2/12'>Title</div>
                         <div className='w-3/12'>Discription</div>
                         <div className='w-3/12'>Task</div>
@@ -18,14 +39,17 @@ const Home = () => {
                         <div className='w-2/12'>Action</div>
                     </div>
                 </div>
-                {ar.map((r) => (
-                    <div className='  px-4 py-3 '>
-                        <div className='flex flex-row w-full shadow-md gap-1 items-center justify-center  p-3 rounded-xl ' style={{ background: "rgba(255, 255, 255, 0.64)" }}>
-                            <div className=' w-2/12'>Button click</div>
-                            <div className=' w-3/12' >Lorem ipsum dolor, sit amet consectetur adipisicing elit. Distinctio, exercitationem aliquam. Cum nihil quaerat quisquam, odit qui consectetur vel. Exercitationem delectus modi a eaque et quis pariatur doloribus, architecto inventore.</div>
-                            <div className='w-3/12'>Task</div>
-                            <div className='w-2/12'>Date</div>
-                            <div className='w-2/12 flex flex-row gap-3 justify-center items-center' ><MdOutlineModeEdit size={30} color='blue' /><RiDeleteBin6Line size={30} color='red' /></div>
+                {taskData.map((task) => (
+
+                    <div className='  px-4 py-3 '  key={task._id}>
+                        <div className='  flex flex-row w-full shadow-md gap-1 items-center justify-center  p-3 rounded-xl hover:bg-fuchsia-100 hover:text-red-400' >
+                            {/* style={{ background: "rgba(255, 255, 255, 0.64)" }} */}
+                            <div className='w-2/12'>{task.title}</div>
+                            <div className='w-3/12 text-ellipsis overflow-hidden' ><span>{task.description}</span></div>
+                            <div className='w-3/12'>{task.task}</div>
+                            <div className='w-2/12'>{task.createdAt.slice(0, 10)}</div>
+                            <div className='w-2/12 flex flex-row gap-3 justify-center items-center' ><MdOutlineModeEdit onClick={() => handleEdit(task)} size={25} color='blue' /><RiDeleteBin6Line onClick={() => handleDelete(task._id)} size={25} color='red' /></div>
+                        <TaskEditModel datas={task} modelOpen={editModelOpen} setModelOpen={setEditModelOpen}/>
                         </div>
                     </div>
                 ))}
