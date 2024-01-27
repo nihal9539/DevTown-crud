@@ -1,0 +1,105 @@
+service: nihal
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-west-1
+  enviornment:
+    DYNAMODB_TABLE_NAME: ${self:cutoms.postTableName}
+
+custom:
+  postsTableName: posts-table-${self:provider.stage}
+
+plugins:
+  - serverless-lam-roles-per-function
+
+functions:
+  getPost:
+    handler: api.getPost
+    name: get-post
+    memorySize: 120 #mb
+    timeout: 5
+    events:
+      - http:
+         path: post/{id}
+         method: GET
+    iamRoleStatments:
+         -Effect: "Allow"
+         Action: 
+          -"dynamodb:GetItem"
+         Resource: !GetAtt PostsTable.Arn
+  CreatePost:
+       handler: api.createPost
+       name: create-post
+       memorySize: 128 #mb
+       timeout: 5
+       events:
+        - http:
+            path: post
+            method: POST
+       iamRoleStatments:
+          -Effect: "Allow"
+          Action: 
+           -"dynamodb:PutItem"
+          Resource: !GetAtt PostsTable.Arn       
+  UpdatePost:
+       handler: api.updatePost
+       name: update-post
+       memorySize: 128 #mb
+       timeout: 5
+       events:
+        - http:
+            path: post/{postId}
+            method: put
+       iamRoleStatments:
+          -Effect: "Allow"
+          Action: 
+           -"dynamodb:UpdateItem"
+          Resource: !GetAtt PostsTable.Arn       
+  DeletePost:
+       handler: api.deletePost
+       name: delete-post
+       memorySize: 128 #mb
+       timeout: 5
+       events:
+        - http:
+            path: post/{postId}
+            method: put
+       iamRoleStatments:
+          -Effect: "Allow"
+          Action: 
+           -"dynamodb:DeleteItem"
+          Resource: !GetAtt PostsTable.Arn       
+  getAllPosts:
+       handler: api.getAllPosts
+       name: get-all-post
+       memorySize: 128 #mb
+       timeout: 5
+       events:
+        - http:
+            path: posts
+            method: DELETE
+       iamRoleStatments:
+          -Effect: "Allow"
+          Action: 
+           -"dynamodb:Scan"
+          Resource: !GetAtt PostsTable.Arn       
+
+resources:
+  Resources:
+    PostsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:cutoms.postTableName}
+        AttributeDefinitions:
+          - AttributeName: postId
+            AttributeType: s
+        KeySchema:
+          - AttributeName: postId
+            KeyType: HASH
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+          
